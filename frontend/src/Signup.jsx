@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@300;400;500;700&display=swap');
 
@@ -409,8 +410,10 @@ const [loading, setLoading] = useState(false);
 
   return e;
 };
+const navigate=useNavigate();
 
-  const handleSubmit = () => {
+  const handleSubmit = (ev) => {
+    ev.preventDefault();
   const e = validate();
 
   setErrors(e);
@@ -419,19 +422,31 @@ const [loading, setLoading] = useState(false);
 
   setLoading(true);
 
-  setTimeout(() => {
-    setLoading(false);
+  setTimeout(async() => {
+    try{
+      const response=await axios.post("http://localhost:8000/signup",{
+        name,email,password
+      });
+      console.log(response.data);
+      alert(response.data.message)
+      navigate("/")
 
-    // Call signup API here
-    console.log({
-      name,
-      email,
-      password,
-    });
+    }catch(error){
+      console.error(error);
+      if(error.response){
+        alert(error.response.data.detail ||"SignUp failed");
+      }else{
+        alert("server error")
+
+      }
+
+    }finally{
+      setLoading(false);
+    }
   }, 1200);
 };
 
-  const navigate=useNavigate();
+  
 
   return (
     <>

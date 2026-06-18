@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@300;400;500;700&display=swap');
@@ -305,21 +306,40 @@ export default function SahayakSignIn({ onSignUp }) {
     if (password.length < 8) e.password = "Password must be at least 8 characters";
     return e;
   };
+  const navigate=useNavigate();
 
-  const handleSubmit = (ev) => {
+  const handleSubmit = async(ev) => {
     ev.preventDefault();
     const e = validate();
     setErrors(e);
     if (Object.keys(e).length === 0) {
+      try{
       setLoading(true);
-      // Replace with your actual sign-in logic
-      setTimeout(() => setLoading(false), 2000);
+      const response=await axios.post("http://localhost:8000/signin",{
+        email,
+        password
+      });
+      console.log(response.data);
+      alert(response.data.message);
+      navigate("/dashboard")
+
+    }catch(error){
+      console.error(error);
+      if(error.response){
+        alert(error.response.data.detail ||"SignIN failed");
+      }else{
+        alert("server error")
+
+      }
+    }finally{
+      setLoading(false);
     }
+  }
   };
 
   const doubled = [...TAGS, ...TAGS];
 
-  const navigate=useNavigate();
+  
 
   return (
     <>
