@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 const STYLES = `
   @import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css');
 
@@ -370,6 +370,8 @@ function HistoryTab({ onStartChat }) {
   );
 }
 
+
+
 /* ── Tab: Profile ── */
 function ProfileTab() {
   return (
@@ -397,6 +399,10 @@ function ProfileTab() {
           <div className="prof-field">
             <span className="pf-label"><i className="ti ti-crown" aria-hidden="true" />Plan</span>
             <span className="pf-val pf-upgrade">Free → Upgrade</span>
+          </div>
+          <div className="prof-field">
+            <span className="pf-label"><i className="ti ti-logout" aria-hidden="true" />Want to Logout</span>
+            <span className="pf-val pf-upgrade" onClick={handleLogout}>Logout</span>
           </div>
         </div>
       </div>
@@ -472,6 +478,8 @@ function ChatTab() {
 export default function Dashboard() {
   const [tab, setTab] = useState("home");
 
+  const navigate=useNavigate();
+
   const goChat = () => setTab("chat");
 
   const NAV = [
@@ -479,6 +487,11 @@ export default function Dashboard() {
     { id: "history", icon: "ti-history",           label: "History"   },
     { id: "profile", icon: "ti-user",              label: "Profile"   },
   ];
+
+  const handleLogout=()=>{
+    localStorage.removeItem("token");
+    navigate("/");
+  }
 
   return (
     <>

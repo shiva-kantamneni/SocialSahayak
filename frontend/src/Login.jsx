@@ -320,6 +320,10 @@ export default function SahayakSignIn({ onSignUp }) {
         password
       });
       console.log(response.data);
+    
+      localStorage.setItem("token",response.data.token);
+        const token=localStorage.getItem("token");
+        console.log(token);
       alert(response.data.message);
       navigate("/dashboard")
 

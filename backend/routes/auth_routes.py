@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from database import db
 from utils.security import hash_password,verify_password
+from utils.jwt_handler import create_token
 
 from Models.user_model import SigninModel,SignupModel
 
@@ -24,10 +25,12 @@ def signup(user:SignupModel):
 def signin(user:SigninModel):
     existing_user=user_collection.find_one({"email":user.email})
     if not existing_user:
-        return {"message":"user Not Found"}
+        raise HTTPException(status_code=404,detail="user not found")
+    
     if not verify_password(user.password,existing_user["password"]):
-        return {"message":"Invalid Password"}
-    return {"message":"login successful"}
+       raise HTTPException(status_code=401,detail="password not matched")
+    token=create_token({"email":existing_user["email"]})
+    return {"message":"login successful","token":token}
 
     
 
