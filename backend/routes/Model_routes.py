@@ -9,6 +9,6 @@ class PromptRequest(BaseModel):
 
 @router.post("/generate")
 def generate(req:PromptRequest):
-
+    print("hii")
     result=generate_content(req.prompt)
     return {"response":result}
