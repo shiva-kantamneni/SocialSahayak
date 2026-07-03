@@ -192,6 +192,7 @@ export default function Chat() {
   const [typing, setTyping]     = useState(false);
   const bottomRef  = useRef(null);
   const textareaRef = useRef(null);
+   const token = localStorage.getItem("token");
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -211,26 +212,21 @@ export default function Chat() {
     setTyping(true);
 
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      console.log("hii");
+      const res = await fetch("http://localhost:8000/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+          "Authorization":`Bearer ${token}`,
+         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 1000,
-          system:
-            "You are Sahayak, a sharp social media AI assistant. Generate captions, hashtags, post ideas, and scheduling recommendations. Be creative, concise, and platform-aware.",
-          messages: nextMsgs.map((m) => ({
-            role: m.role === "ai" ? "assistant" : "user",
-            content: m.content,
-          })),
+          prompt:text
         }),
       });
       const data = await res.json();
-      const reply =
-        data.content?.find((b) => b.type === "text")?.text ||
-        "Sorry, I couldn't generate a response. Please try again.";
+      const reply =data.response;
       setMessages([...nextMsgs, { role: "ai", content: reply, time: nowStr() }]);
-    } catch {
+    } catch(err) {
+      console.error(err);
       setMessages([
         ...nextMsgs,
         { role: "ai", content: "Something went wrong. Please try again.", time: nowStr() },
@@ -274,7 +270,6 @@ export default function Chat() {
         {/* Messages / Empty state */}
         {isEmpty ? (
           <div className="empty-state">
-            <div className="empty-icon">✦</div>
             <h3>What are we posting today?</h3>
             <p>
               Ask Sahayak for captions, hashtags, posting schedules, or content
@@ -293,7 +288,7 @@ export default function Chat() {
             {messages.map((msg, i) => (
               <div key={i} className={`msg-row ${msg.role}`}>
                 {msg.role === "ai" ? (
-                  <div className="ai-avatar-icon">✦</div>
+                  <div className="ai-avatar-icon">SS</div>
                 ) : (
                   <div className="user-avatar-letter">Y</div>
                 )}
@@ -306,7 +301,7 @@ export default function Chat() {
 
             {typing && (
               <div className="msg-row ai">
-                <div className="ai-avatar-icon">✦</div>
+                <div className="ai-avatar-icon">SS</div>
                 <div className="bubble ai">
                   <div className="typing-indicator">
                     <span /><span /><span />

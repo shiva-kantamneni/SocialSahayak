@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { replace, useNavigate } from "react-router-dom";
 
 export default function useUser() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate=useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
