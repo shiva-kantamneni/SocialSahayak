@@ -1,4 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException,Depends
+from utils.auth import get_current_user
+from bson import ObjectId
+
 from database import db
 from utils.security import hash_password,verify_password
 from utils.jwt_handler import create_token
@@ -29,10 +32,18 @@ def signin(user:SigninModel):
     
     if not verify_password(user.password,existing_user["password"]):
        raise HTTPException(status_code=401,detail="password not matched")
-    token=create_token({"email":existing_user["email"]})
+    token=create_token({"email":existing_user["email"],"user_id":str(existing_user["_id"])})
     return {"message":"login successful","token":token}
 
-    
+@router.get("/me")
+def get_profile(current_user=Depends(get_current_user)):
+    user=user_collection.find_one({
+        "_id":ObjectId(current_user["user_id"])
+    })
+    return {
+        "name":user["name"],
+        "email":user["email"]
+    }
 
 @router.get("/")
 def home():
