@@ -10,7 +10,7 @@ Algo=os.getenv("ALGORITHM")
 
 def create_token(data:dict):
     to_encode=data.copy()
-    expire=datetime.utcnow()+timedelta(minutes=30)
+    expire=datetime.utcnow()+timedelta(minutes=150)
     to_encode.update({"exp":expire})
     return jwt.encode(to_encode,Sec_Key,algorithm=Algo)
 
