@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import Layout from "./components/Layout";
+import { useParams } from "react-router-dom";
+import useUser from "./hooks/useUser";
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -190,9 +192,30 @@ export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput]       = useState("");
   const [typing, setTyping]     = useState(false);
+  const [chatId,setChatId]=useState(null);
   const bottomRef  = useRef(null);
   const textareaRef = useRef(null);
    const token = localStorage.getItem("token");
+   const {chat_id}=useParams();
+   const {user}=useUser();
+   
+
+   useEffect(()=>{
+    if(!chat_id) return;
+    const fetchChat=async()=>{
+      const token=localStorage.getItem("token");
+      const res=await fetch(`http://localhost:8000/history/${chat_id}`,
+        {
+          headers:{
+            "Authorization":`Bearer ${token}`
+          }
+        }
+      );
+      const data=await res.json();
+      setMessages(data.messages);
+    };
+    fetchChat();
+   },[chat_id]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -212,24 +235,25 @@ export default function Chat() {
     setTyping(true);
 
     try {
-      console.log("hii");
       const res = await fetch("http://localhost:8000/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json",
           "Authorization":`Bearer ${token}`,
          },
         body: JSON.stringify({
-          prompt:text
+          prompt:text,
+          chat_id:chatId
         }),
       });
       const data = await res.json();
+      setChatId(data.chat_id);
       const reply =data.response;
-      setMessages([...nextMsgs, { role: "ai", content: reply, time: nowStr() }]);
+      setMessages([...nextMsgs, { role: "assistant", content: reply, time: nowStr() }]);
     } catch(err) {
       console.error(err);
       setMessages([
         ...nextMsgs,
-        { role: "ai", content: "Something went wrong. Please try again.", time: nowStr() },
+        { role: "assistant", content: "Something went wrong. Please try again.", time: nowStr() },
       ]);
     } finally {
       setTyping(false);
@@ -287,10 +311,10 @@ export default function Chat() {
           <div className="messages-area">
             {messages.map((msg, i) => (
               <div key={i} className={`msg-row ${msg.role}`}>
-                {msg.role === "ai" ? (
+                {msg.role === "assistant" ? (
                   <div className="ai-avatar-icon">SS</div>
                 ) : (
-                  <div className="user-avatar-letter">Y</div>
+                  <div className="user-avatar-letter">{user?.name.charAt(0)}</div>
                 )}
                 <div style={{ maxWidth: "72%" }}>
                   <div className={`bubble ${msg.role}`}>{msg.content}</div>

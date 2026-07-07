@@ -544,15 +544,6 @@ export default function SahayakSignIn({ onSignUp }) {
                   </>
                 )}
               </button>
-
-              <div className="divider">or</div>
-
-              {/* Google */}
-              <button type="button" className="btn-google">
-                <GoogleIcon />
-                Continue with Google
-              </button>
-
               {/* Sign up */}
               <div className="signup-row">
                 Don't have an account?{" "}

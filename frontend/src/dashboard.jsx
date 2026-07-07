@@ -1,25 +1,13 @@
 import { Link } from "react-router-dom";
 import Layout from "./components/Layout";
-import { HISTORY_ITEMS } from "./assets/globals";
 import useUser from "./hooks/useUser";
-
-function HistItem({ item }) {
-  return (
-    <Link to="/dashboard/chat" className="hist-item">
-      <div className="hist-icon">
-        <i className={`ti ${item.icon}`} aria-hidden="true" />
-      </div>
-      <div className="hist-info">
-        <div className="hist-name">{item.name}</div>
-        <div className="hist-date">{item.date}</div>
-      </div>
-      <i className="ti ti-chevron-right hist-arrow" aria-hidden="true" />
-    </Link>
-  );
-}
+import { useEffect,useState } from "react";
+import useHistory from "./hooks/useHistory";
 
 export default function Dashboard() {
   const {user}=useUser();
+  const {history}=useHistory();
+
   return (
     <Layout>
       <h1 className="pg-title">Good morning, {user?.name} 👋</h1>
@@ -32,12 +20,8 @@ export default function Dashboard() {
 
       <div className="stats">
         <div className="stat">
-          <div className="stat-val">12</div>
+          <div className="stat-val">{history.length}</div>
           <div className="stat-label">Total chats</div>
-        </div>
-        <div className="stat">
-          <div className="stat-val">38</div>
-          <div className="stat-label">Generations</div>
         </div>
         <div className="stat">
           <div className="stat-val">Free</div>
@@ -48,8 +32,27 @@ export default function Dashboard() {
       <div className="card">
         <div className="card-title">Recent sessions</div>
         <div className="hist-list">
-          {HISTORY_ITEMS.slice(0, 2).map((item) => (
-            <HistItem key={item.id} item={item} />
+          {history.slice(0, 2).map((chat) => (
+            <Link 
+              key={chat._id}
+              to={`/dashboard/chat/${chat._id}`}
+              className="hist-item"
+              >
+                <div className="hist-icon">
+                  <i className="ti ti-message"/>
+                </div>
+                <div className="hist-info">
+                  <div className="hist-name">
+                    {chat.title}
+                  </div>
+                  <div className="hist-date">
+                  {new Date(chat.updated_at).toLocaleString()}
+                </div>
+
+                </div>
+                <i className="ti ti-chevron-right hist-arrow"/>
+
+              </Link>
           ))}
         </div>
       </div>

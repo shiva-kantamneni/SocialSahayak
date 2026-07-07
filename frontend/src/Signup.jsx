@@ -630,12 +630,6 @@ const navigate=useNavigate();
   {loading ? "Creating Account..." : "Create Account"}
 </button>
 
-<div className="divider">or</div>
-
-<button className="btn-google">
-  <GoogleIcon />
-  Continue with Google
-</button>
 
 <div className="signin-row">
   Already have an account?{" "}

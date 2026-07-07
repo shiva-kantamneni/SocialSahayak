@@ -15,6 +15,7 @@ function App() {
       <Route path="/signup" element={<SahayakSignUp/>}/>
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard/></ProtectedRoute>}/>
       <Route path="/dashboard/chat" element={<ProtectedRoute><Chat/></ProtectedRoute>}/>
+      <Route path="/dashboard/chat/:chat_id" element={<ProtectedRoute><Chat/></ProtectedRoute>}/>
       <Route path="/dashboard/history" element={<ProtectedRoute><History/></ProtectedRoute>}/>
       <Route path="/dashboard/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>}/>
     </Routes>

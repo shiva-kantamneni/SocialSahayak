@@ -25,15 +25,6 @@ export default function Profile() {
             </span>
             <span className="pf-val">{user?.email}</span>
           </div>
-
-          <div className="prof-field">
-            <span className="pf-label">
-              <i className="ti ti-chart-bar" aria-hidden="true" />
-              Generations used
-            </span>
-            <span className="pf-val">38 / 50</span>
-          </div>
-
           <div className="prof-field">
             <span className="pf-label">
               <i className="ti ti-crown" aria-hidden="true" />
