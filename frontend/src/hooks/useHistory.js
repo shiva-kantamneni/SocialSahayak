@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { replace,useNavigate } from "react-router-dom";
 
 export default function useHistory() {
 
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate=useNavigate();
 
     useEffect(() => {
 
@@ -22,18 +24,18 @@ export default function useHistory() {
                     }
                 );
 
-                if (res.status === 401) {
-                    localStorage.removeItem("token");
-                    window.location.href = "/";
-                    return;
-                }
-
                 const data = await res.json();
 
                 setHistory(data);
 
             } catch (err) {
                 console.error(err);
+                if(res.response?.status===401){
+                    localStorage.removeItem("token");
+                    navigate("/",{replace:true});
+                    return;
+                    
+                }
             } finally {
                 setLoading(false);
             }
@@ -42,7 +44,7 @@ export default function useHistory() {
 
         fetchHistory();
 
-    }, []);
+    }, [navigate]);
 
     return {
         history,

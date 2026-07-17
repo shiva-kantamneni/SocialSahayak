@@ -1,6 +1,8 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useAsyncError, useNavigate } from "react-router-dom";
 import axios from "axios";
+import {toast} from "react-toastify";
+import { Navigate } from "react-router-dom";
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@300;400;500;700&display=swap');
@@ -227,78 +229,14 @@ const GoogleIcon = () => (
     <path fill="#EA4335" d="M24 10.228c3.416 0 6.476 1.175 8.887 3.478l6.663-6.663C35.516 3.218 30.264 1 24 1A23 23 0 003.224 13.825l7.756 5.993C12.81 14.318 17.943 10.228 24 10.228z"/>
   </svg>
 );
-
-function ForgotModal({ onClose }) {
-  const [sent, setSent] = useState(false);
-  const [email, setEmail] = useState("");
-
-  return (
-    <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="modal-box">
-        {!sent ? (
-          <>
-            <div className="modal-icon">
-              <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-            </div>
-            <div className="modal-title">Reset your password</div>
-            <div className="modal-desc">
-              Enter the email linked to your Sahayak account. We'll send you a secure link to get back in.
-            </div>
-            <div className="field">
-              <label>Email address</label>
-              <div className="input-wrap">
-                <svg className="input-icon" viewBox="0 0 24 24">
-                  <rect x="2" y="4" width="20" height="16" rx="3" />
-                  <path d="M2 7l10 7 10-7" />
-                </svg>
-                <input
-                  className="field-input"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="modal-actions">
-              <button className="btn-outline" onClick={onClose}>Cancel</button>
-              <button className="btn-modal-send" onClick={() => email && setSent(true)}>
-                Send reset link
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className="success-state">
-            <div className="success-check">
-              <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></svg>
-            </div>
-            <div className="success-title">Check your inbox!</div>
-            <div className="success-desc" style={{ marginBottom: "1.5rem" }}>
-              A reset link has been sent to{" "}
-              <span style={{ color: "#ff9de0" }}>{email}</span>. It expires in 15 minutes.
-            </div>
-            <button
-              className="btn-modal-send"
-              style={{ width: "100%", height: "44px" }}
-              onClick={onClose}
-            >
-              Done
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
 export default function SahayakSignIn({ onSignUp }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
-  const [remember, setRemember] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+
+
 
   const validate = () => {
     const e = {};
@@ -307,6 +245,11 @@ export default function SahayakSignIn({ onSignUp }) {
     return e;
   };
   const navigate=useNavigate();
+
+  const token=localStorage.getItem("token");
+  if(token){
+    return <Navigate to="/dashboard" replace/>;
+  }
 
   const handleSubmit = async(ev) => {
     ev.preventDefault();
@@ -319,20 +262,18 @@ export default function SahayakSignIn({ onSignUp }) {
         email,
         password
       });
-      console.log(response.data);
     
       localStorage.setItem("token",response.data.token);
         const token=localStorage.getItem("token");
-        console.log(token);
-      alert(response.data.message);
+      toast.success(response.data.message);
       navigate("/dashboard")
 
     }catch(error){
       console.error(error);
       if(error.response){
-        alert(error.response.data.detail ||"SignIN failed");
+        toast.error(error.response.data.detail ||"SignIN failed");
       }else{
-        alert("server error")
+        toast.error("server error");
 
       }
     }finally{
@@ -349,7 +290,7 @@ export default function SahayakSignIn({ onSignUp }) {
     <>
       <style>{styles}</style>
 
-      {showModal && <ForgotModal onClose={() => setShowModal(false)} />}
+     
 
       <div className="app-wrapper">
         {/* ── LEFT PANEL ── */}
@@ -502,25 +443,6 @@ export default function SahayakSignIn({ onSignUp }) {
                 {errors.password && <div className="error-msg">{errors.password}</div>}
               </div>
 
-              {/* Remember / Forgot */}
-              <div className="row-between">
-                <label className="remember">
-                  <input
-                    type="checkbox"
-                    className="remember-check"
-                    checked={remember}
-                    onChange={(e) => setRemember(e.target.checked)}
-                  />
-                  Remember me
-                </label>
-                <button
-                  type="button"
-                  className="forgot-btn"
-                  onClick={() => setShowModal(true)}
-                >
-                  Forgot password?
-                </button>
-              </div>
 
               {/* Submit */}
               <button type="submit" className="btn-primary" disabled={loading}>

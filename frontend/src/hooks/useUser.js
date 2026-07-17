@@ -24,13 +24,18 @@ export default function useUser() {
         setUser(res.data);
       } catch (err) {
         console.error(err);
+        if(err.response?.status===401){
+          localStorage.removeItem("token");
+          navigate("/",{replace:true});
+          return;
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchUser();
-  }, []);
+  }, [navigate]);
 
   return { user, loading };
 }

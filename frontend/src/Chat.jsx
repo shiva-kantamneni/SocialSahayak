@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import Layout from "./components/Layout";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate,replace } from "react-router-dom";
 import useUser from "./hooks/useUser";
+
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -198,6 +199,7 @@ export default function Chat() {
    const token = localStorage.getItem("token");
    const {chat_id}=useParams();
    const {user}=useUser();
+   const navigate=useNavigate();
    
 
    useEffect(()=>{
@@ -251,6 +253,10 @@ export default function Chat() {
       setMessages([...nextMsgs, { role: "assistant", content: reply, time: nowStr() }]);
     } catch(err) {
       console.error(err);
+      if(res.response?.status===401){
+          localStorage.removeItem("token");
+          navigate("/",{replace:true});
+      }
       setMessages([
         ...nextMsgs,
         { role: "assistant", content: "Something went wrong. Please try again.", time: nowStr() },
@@ -279,8 +285,6 @@ export default function Chat() {
     <Layout>
       <style>{styles}</style>
       <div className="chat-root">
-
-        {/* Top bar */}
         <div className="chat-topbar">
           <div className="topbar-left">
             <div className="logo-dot" />

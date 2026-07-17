@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@300;400;500;700&display=swap');
 
@@ -427,16 +428,16 @@ const navigate=useNavigate();
       const response=await axios.post("http://localhost:8000/signup",{
         name,email,password
       });
-      console.log(response.data);
-      alert(response.data.message)
+      
+      toast.success(response.data.message)
       navigate("/")
 
     }catch(error){
-      console.error(error);
+      
       if(error.response){
-        alert(error.response.data.detail ||"SignUp failed");
+        toast.error(error.response.data.detail ||"SignUp failed");
       }else{
-        alert("server error")
+        toast.error("server error")
 
       }
 
