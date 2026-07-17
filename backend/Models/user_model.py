@@ -10,6 +10,7 @@ class SigninModel(BaseModel):
     email:EmailStr
     password:str
 
-
+class ForgotPassword(BaseModel):
+    email:str
 
 

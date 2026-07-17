@@ -6,7 +6,7 @@ from database import db
 from utils.security import hash_password,verify_password
 from utils.jwt_handler import create_token
 
-from Models.user_model import SigninModel,SignupModel
+from Models.user_model import SigninModel,SignupModel,ForgotPassword
 
 from utils.security import hash_password,verify_password
 user_collection=db["users"]
@@ -44,6 +44,22 @@ def get_profile(current_user=Depends(get_current_user)):
         "name":user["name"],
         "email":user["email"]
     }
+
+
+@router.post("/forgot-password")
+def forgot_password(data:ForgotPassword):
+    user=user_collection.find_one({
+        "email":req.email
+    })
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="Email Not Found"
+        )
+    return{
+        "message":"Email Verified"
+    }
+    
 
 @router.get("/")
 def home():
