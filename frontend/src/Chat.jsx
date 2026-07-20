@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import Layout from "./components/Layout";
 import { useParams,useNavigate,replace } from "react-router-dom";
 import useUser from "./hooks/useUser";
+const API_URL=import.meta.env.VITE_API_URL;
 
 
 const styles = `
@@ -206,7 +207,7 @@ export default function Chat() {
     if(!chat_id) return;
     const fetchChat=async()=>{
       const token=localStorage.getItem("token");
-      const res=await fetch(`http://localhost:8000/history/${chat_id}`,
+      const res=await fetch(`${API_URL}/history/${chat_id}`,
         {
           headers:{
             "Authorization":`Bearer ${token}`
@@ -237,7 +238,7 @@ export default function Chat() {
     setTyping(true);
 
     try {
-      const res = await fetch("http://localhost:8000/generate", {
+      const res = await fetch(`${API_URL}/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json",
           "Authorization":`Bearer ${token}`,

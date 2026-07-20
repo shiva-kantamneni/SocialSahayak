@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { replace,useNavigate } from "react-router-dom";
+const API_URL=import.meta.env.VITE_API_URL;
 
 export default function useHistory() {
 
@@ -16,7 +17,7 @@ export default function useHistory() {
                 const token = localStorage.getItem("token");
 
                 const res = await fetch(
-                    "http://localhost:8000/history",
+                    `${API_URL}/history`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`

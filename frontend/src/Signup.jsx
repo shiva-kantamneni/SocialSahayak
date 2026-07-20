@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+const API_URL=import.meta.env.VITE_API_URL;
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@300;400;500;700&display=swap');
 
@@ -425,7 +426,7 @@ const navigate=useNavigate();
 
   setTimeout(async() => {
     try{
-      const response=await axios.post("http://localhost:8000/signup",{
+      const response=await axios.post(`${API_URL}/signup`,{
         name,email,password
       });
       
